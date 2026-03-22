@@ -51,6 +51,7 @@ readonly version_lt=master   # ~unmaintained since 2019
 readonly version_mesh=master # ~unmaintained since 2021
 readonly version_mi=v1.8.2
 readonly version_mi2=v2.1.2
+readonly version_mi3=v3.2.8
 readonly version_mng=master  # ~unmaintained
 readonly version_nomesh=$version_mesh
 readonly version_pa=main
@@ -91,6 +92,7 @@ setup_lt=0
 setup_mesh=0
 setup_mi=0
 setup_mi2=0
+setup_mi3=0
 setup_mng=0
 setup_nomesh=0
 setup_pa=0
@@ -141,6 +143,7 @@ while : ; do
         setup_lp=$flag_arg
         setup_mi=$flag_arg
         setup_mi2=$flag_arg
+        setup_mi3=$flag_arg
         setup_pa=$flag_arg
         setup_sn=$flag_arg
         setup_sg=$flag_arg
@@ -208,6 +211,8 @@ while : ; do
         setup_mi=$flag_arg;;
     mi2)
         setup_mi2=$flag_arg;;
+    mi3)
+        setup_mi3=$flag_arg;;
     nomesh)
         setup_nomesh=$flag_arg;;
     pa)
@@ -744,6 +749,29 @@ if test "$setup_mi2" = "1"; then
 
   echo ""
   echo "- build mimalloc2 secure"
+
+  cmake -B out/secure -DMI_SECURE=ON
+  cmake --build out/secure --parallel $procs
+  popd
+fi
+
+if test "$setup_mi3" = "1"; then
+  checkout mi3 $version_mi3 https://github.com/microsoft/mimalloc
+
+  echo ""
+  echo "- build mimalloc3 release"
+
+  cmake -B out/release
+  cmake --build out/release --parallel $procs
+
+  echo ""
+  echo "- build mimalloc3 debug with full checking"
+
+  cmake -B out/debug -DMI_CHECK_FULL=ON
+  cmake --build out/debug --parallel $procs
+
+  echo ""
+  echo "- build mimalloc3 secure"
 
   cmake -B out/secure -DMI_SECURE=ON
   cmake --build out/secure --parallel $procs
